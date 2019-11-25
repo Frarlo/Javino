@@ -101,7 +101,7 @@ void loop() {
   if(isReading)
     handleInput();
   else if(isOpen) {
-    sendPrintPacket("Porcodio");
+    sendPrintPacket("Hello World!");
 
     isReading = true;
     sendReadyToRead();
