@@ -1,14 +1,14 @@
-package gov.ismonnet.arduino;
+package gov.ismonnet.server;
 
-import java.net.DatagramSocket;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class ReceiveThread extends Thread {
+public class ServerReceiveThread extends Thread {
+
     private Supplier<String> data;
     private Consumer<String> consumer;
 
-    public ReceiveThread(Supplier<String> data, Consumer<String> consumer) {
+    public ServerReceiveThread(Supplier<String> data, Consumer<String> consumer) {
         this.data = data;
         this.consumer = consumer;
     }
@@ -23,5 +23,4 @@ public class ReceiveThread extends Thread {
 
         System.out.println("RECEIVE THREAD INTERRUPTED");
     }
-
 }

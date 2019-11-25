@@ -1,22 +1,23 @@
-package gov.ismonnet.arduino;
+package gov.ismonnet.server;
 
-import gov.ismonnet.shared.Shared;
 import gov.ismonnet.shared.UDPManager;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 
-public class ArduinoClient {
-
+public class ServerManager {
     private DatagramSocket receiveSocket;
     private DatagramSocket sendSocket;
     private InetAddress ip;
     private int receivePort;
 
-    public ArduinoClient (InetAddress ip, int receivePort) throws SocketException {
+    public ServerManager(InetAddress ip, int receivePort) throws SocketException {
 
-        this.receiveSocket = new DatagramSocket(receivePort);
-        this.sendSocket = new DatagramSocket();
+        receiveSocket = new DatagramSocket(receivePort);
+        sendSocket = new DatagramSocket();
         this.ip = ip;
         this.receivePort = receivePort;
     }
@@ -35,5 +36,4 @@ public class ArduinoClient {
 
         return UDPManager.getInfoReceivedPacket(pkt);
     }
-
 }
