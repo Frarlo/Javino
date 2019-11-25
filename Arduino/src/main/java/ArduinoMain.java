@@ -1,16 +1,18 @@
-import gov.ismonnet.arduino.netty.ArduinoSerialManager;
-import gov.ismonnet.arduino.serial.CliSerialPortSelector;
-import gov.ismonnet.arduino.serial.SerialPortSelector;
+import gov.ismonnet.arduino.ArduinoClient;
+import gov.ismonnet.arduino.ReceiveThread;
 
-import java.util.Scanner;
+import java.net.DatagramSocket;
+        import java.net.SocketException;
 
 public class ArduinoMain {
 
-    public static void main(String[] args) {
-        final Scanner scanner = new Scanner(System.in);
-        final SerialPortSelector serialPortSelector = new CliSerialPortSelector(System.out, scanner);
-        final ArduinoSerialManager serialManager = new ArduinoSerialManager(serialPortSelector.choosePort());
+    public static void main(String[] args) throws SocketException {
+        ArduinoClient client = new ArduinoClient();
 
-        serialManager.start();
+        Thread th = new ReceiveThread(
+                () -> {
+                    return client.read();
+                },
+                toSend -> client.send(toSend));
     }
 }
