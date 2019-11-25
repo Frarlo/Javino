@@ -1,4 +1,4 @@
-package gov.ismonnet.shared.netty;
+package gov.ismonnet.shared;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;

@@ -1,6 +1,6 @@
 package gov.ismonnet.arduino.netty.cpacket;
 
-import gov.ismonnet.shared.netty.CustomByteBuf;
+import gov.ismonnet.shared.CustomByteBuf;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
