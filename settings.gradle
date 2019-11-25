@@ -1,0 +1,6 @@
+rootProject.name = 'Javino'
+include 'Shared'
+include 'Arduino'
+include 'Client'
+include 'Server'
+
