@@ -8,6 +8,5 @@ public class ServerMain {
     public static void main(String[] args) throws SocketException {
         ServerManager server = new ServerManager(Constants.SEVER_MAIN_RECEIVE_PORT);
         server.bind();
-
     }
 }
