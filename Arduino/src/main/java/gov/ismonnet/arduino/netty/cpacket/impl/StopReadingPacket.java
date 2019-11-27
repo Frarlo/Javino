@@ -1,6 +1,6 @@
 package gov.ismonnet.arduino.netty.cpacket.impl;
 
-import gov.ismonnet.shared.CustomByteBuf;
+import gov.ismonnet.shared.netty.CustomByteBuf;
 import gov.ismonnet.arduino.netty.cpacket.CPacket;
 
 public class StopReadingPacket implements CPacket {

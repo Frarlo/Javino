@@ -1,30 +1,35 @@
 package gov.ismonnet.server;
 
-import gov.ismonnet.shared.UDPManager;
+import gov.ismonnet.shared.UdpUtils;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 public class ServerManager {
+
+    private final int receivePort;
+
     private DatagramSocket receiveSocket;
-    private DatagramSocket sendSocket;
-    private InetAddress ip;
-    private int receivePort;
+    private Thread receiveThread;
 
-    public ServerManager(InetAddress ip, int receivePort) throws SocketException {
-
-        receiveSocket = new DatagramSocket(receivePort);
-        sendSocket = new DatagramSocket();
-        this.ip = ip;
+    public ServerManager(int receivePort) {
         this.receivePort = receivePort;
     }
 
-    public void send(String msg) throws IOException {
+    public void bind() throws SocketException {
 
-        sendSocket.send(UDPManager.getPacketToSend(msg, ip, receivePort));
+        receiveSocket = new DatagramSocket(receivePort);
+        receiveThread = new Thread(() -> {
+
+
+
+        });
+
+        receiveThread.start();
+    }
+
+    public void send(String msg) throws IOException {
+        receiveSocket.send(UdpUtils.getPacketToSend(msg, ip, receivePort));
     }
 
     public String read() throws IOException {
@@ -34,6 +39,6 @@ public class ServerManager {
         DatagramPacket pkt = new DatagramPacket(buffer, buffer.length);
         receiveSocket.receive(pkt);
 
-        return UDPManager.getInfoReceivedPacket(pkt);
+        return UdpUtils.getInfoReceivedPacket(pkt);
     }
 }

@@ -1,15 +1,14 @@
 import gov.ismonnet.arduino.ArduinoClient;
 import gov.ismonnet.arduino.ReceiveThread;
-import gov.ismonnet.shared.Shared;
+import gov.ismonnet.shared.Constants;
 
 import java.io.IOException;
-import java.net.DatagramSocket;
-        import java.net.SocketException;
+import java.net.SocketException;
 
 public class ArduinoMain {
 
     public static void main(String[] args) throws SocketException {
-        ArduinoClient client = new ArduinoClient(Shared.IP_ADDRESS, Shared.ARDUINO_MAIN_RECEIVE_PORT);
+        ArduinoClient client = new ArduinoClient(Constants.IP_ADDRESS, Constants.ARDUINO_MAIN_RECEIVE_PORT);
 
 
         Thread th = new ReceiveThread(

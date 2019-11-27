@@ -1,7 +1,6 @@
 package gov.ismonnet.arduino;
 
-import gov.ismonnet.shared.Shared;
-import gov.ismonnet.shared.UDPManager;
+import gov.ismonnet.shared.UdpUtils;
 
 import java.io.IOException;
 import java.net.*;
@@ -13,8 +12,7 @@ public class ArduinoClient {
     private InetAddress ip;
     private int receivePort;
 
-    public ArduinoClient (InetAddress ip, int receivePort) throws SocketException {
-
+    public ArduinoClient(InetAddress ip, int receivePort) throws SocketException {
         this.receiveSocket = new DatagramSocket(receivePort);
         this.sendSocket = new DatagramSocket();
         this.ip = ip;
@@ -23,7 +21,7 @@ public class ArduinoClient {
 
     public void send(String msg) throws IOException {
 
-        sendSocket.send(UDPManager.getPacketToSend(msg, ip, receivePort));
+        sendSocket.send(UdpUtils.getPacketToSend(msg, ip, receivePort));
     }
 
     public String read() throws IOException {
@@ -33,7 +31,7 @@ public class ArduinoClient {
         DatagramPacket pkt = new DatagramPacket(buffer, buffer.length);
         receiveSocket.receive(pkt);
 
-        return UDPManager.getInfoReceivedPacket(pkt);
+        return UdpUtils.getInfoReceivedPacket(pkt);
     }
 
 }

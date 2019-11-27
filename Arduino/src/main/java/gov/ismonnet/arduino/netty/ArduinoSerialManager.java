@@ -13,7 +13,7 @@ import gov.ismonnet.arduino.netty.purejavacomm.PureJavaCommChannel;
 import gov.ismonnet.arduino.netty.purejavacomm.PureJavaCommChannelConfig;
 import gov.ismonnet.arduino.netty.purejavacomm.PureJavaCommChannelOption;
 import gov.ismonnet.arduino.netty.purejavacomm.PureJavaCommDeviceAddress;
-import gov.ismonnet.shared.CustomByteBuf;
+import gov.ismonnet.shared.netty.CustomByteBuf;
 import gov.ismonnet.shared.netty.charstuffing.CharStuffingDecoder;
 import gov.ismonnet.shared.netty.charstuffing.CharStuffingEncoder;
 import io.netty.bootstrap.Bootstrap;
