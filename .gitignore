@@ -1,1 +1,14 @@
 /.gradle/
+
+# IntelliJ IDEA
+
+.idea/*
+
+*.iml
+modules.xml
+.idea/misc.xml
+*.ipr
+
+out/
+.idea_module/
+/target/
