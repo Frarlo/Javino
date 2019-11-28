@@ -1,14 +1,16 @@
 package gov.ismonnet.arduino;
 
+import gov.ismonnet.shared.Commands;
+
 import java.net.DatagramSocket;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ReceiveThread extends Thread {
-    private Supplier<String> data;
-    private Consumer<String> consumer;
+    private Supplier<Commands> data;
+    private Consumer<Commands> consumer;
 
-    public ReceiveThread(Supplier<String> data, Consumer<String> consumer) {
+    public ReceiveThread(Supplier<Commands> data, Consumer<Commands> consumer) {
         this.data = data;
         this.consumer = consumer;
     }
