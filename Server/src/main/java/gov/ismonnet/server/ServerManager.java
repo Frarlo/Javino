@@ -111,8 +111,10 @@ public class ServerManager {
     private void connectClient(InetAddress newClientIp, int newClientPort) {
         final ClientInformation client = new ClientInformation(newClientIp, newClientPort);
         clients.add(client);
-
         LOGGER.trace("New connection {}", client);
+
+        final boolean state = ledState.getAndIncrement() % 2 == 0;
+        send(state ? Commands.TURN_ON_LED : Commands.TURN_OFF_LED, client);
     }
 
     private void disconnectClient(ClientInformation info) {
