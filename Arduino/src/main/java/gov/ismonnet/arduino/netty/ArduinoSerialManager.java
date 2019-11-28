@@ -1,9 +1,10 @@
 package gov.ismonnet.arduino.netty;
 
 import gov.ismonnet.arduino.netty.apacket.APacket;
+import gov.ismonnet.arduino.netty.apacket.APacketParser;
+import gov.ismonnet.arduino.netty.apacket.impl.PressButtonPacket;
 import gov.ismonnet.arduino.netty.apacket.impl.PrintPacket;
-import gov.ismonnet.arduino.netty.apacket.impl.RtrPacket;
-import gov.ismonnet.arduino.netty.apacket.parser.APacketParser;
+import gov.ismonnet.arduino.netty.apacket.impl.ReadyToReadPacket;
 import gov.ismonnet.arduino.netty.cpacket.CPacket;
 import gov.ismonnet.arduino.netty.cpacket.CPacketEncoder;
 import gov.ismonnet.arduino.netty.cpacket.impl.EndCommPacket;
@@ -23,9 +24,7 @@ import io.netty.channel.oio.OioEventLoopGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ArduinoSerialManager {
@@ -35,8 +34,9 @@ public final class ArduinoSerialManager {
 
     static {
         final Map<Byte, APacketParser> temp = new HashMap<>();
-        temp.put(RtrPacket.ID, RtrPacket.PARSER);
+        temp.put(ReadyToReadPacket.ID, ReadyToReadPacket.PARSER);
         temp.put(PrintPacket.ID, PrintPacket.PARSER);
+        temp.put(PressButtonPacket.ID, PressButtonPacket.PARSER);
         PACKET_PARSERS = Collections.unmodifiableMap(temp);
     }
 
@@ -47,6 +47,7 @@ public final class ArduinoSerialManager {
     private ChannelFuture future;
 
     private final Map<CPacket, ChannelPromise> storedPackets;
+    private final Set<PacketListener> listeners;
 
     public ArduinoSerialManager(final String port) {
         this.port = port;
@@ -57,6 +58,7 @@ public final class ArduinoSerialManager {
                 .option(PureJavaCommChannelOption.BAUD_RATE, PureJavaCommChannelConfig.Baudrate.B115200)
                 .option(PureJavaCommChannelOption.WAIT_TIME, 500)
                 .handler(new ArduinoChannelHandler());
+        listeners = new HashSet<>();
     }
 
     public void start() {
@@ -123,10 +125,10 @@ public final class ArduinoSerialManager {
                                 final APacket packet = packetParser.parse(msg0);
                                 LOGGER.trace("Received packet {}", packet);
 
-                                if(packet instanceof RtrPacket)
+                                if(packet instanceof ReadyToReadPacket)
                                     sendStoredPackets();
-                                // else
-                                // TODO: we got the packet. And now?
+                                 else
+                                     fire(packet);
                             } catch(Exception e) {
                                 LOGGER.error("Couldn't decode packet with ID {}", packetId, e);
                             }
@@ -134,5 +136,17 @@ public final class ArduinoSerialManager {
                     }
             );
         }
+    }
+
+    public void register(PacketListener listener) {
+        listeners.add(listener);
+    }
+
+    public void unregister(PacketListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void fire(APacket packet) {
+        listeners.forEach(l -> l.receive(packet));
     }
 }

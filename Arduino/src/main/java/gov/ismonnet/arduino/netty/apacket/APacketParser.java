@@ -1,7 +1,6 @@
-package gov.ismonnet.arduino.netty.apacket.parser;
+package gov.ismonnet.arduino.netty.apacket;
 
 import gov.ismonnet.shared.netty.CustomByteBuf;
-import gov.ismonnet.arduino.netty.apacket.APacket;
 
 
 public interface APacketParser {

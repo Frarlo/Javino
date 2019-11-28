@@ -2,7 +2,7 @@ package gov.ismonnet.arduino.netty.apacket.impl;
 
 import gov.ismonnet.shared.netty.CustomByteBuf;
 import gov.ismonnet.arduino.netty.apacket.APacket;
-import gov.ismonnet.arduino.netty.apacket.parser.APacketParser;
+import gov.ismonnet.arduino.netty.apacket.APacketParser;
 
 import java.nio.charset.StandardCharsets;
 

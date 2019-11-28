@@ -4,6 +4,7 @@ import gov.ismonnet.shared.netty.CustomByteBuf;
 import gov.ismonnet.arduino.netty.cpacket.CPacket;
 
 public class StopReadingPacket implements CPacket {
+
     public static final byte ID = 3;
     
     @Override
