@@ -28,7 +28,7 @@ public class ArduinoMain {
         final PacketsToCommandsConverter converter = new PacketsToCommandsConverterImpl();
         serial.start();
 
-        final ArduinoClient client = new ArduinoClient(Constants.IP_ADDRESS, Constants.SEVER_MAIN_RECEIVE_PORT);
+        final ArduinoClient client = new ArduinoClient(Constants.SERVER_IP_ADDRESS, Constants.SEVER_PORT);
 
         final Thread clientToSerial = new ReceiveThread(
                 client::read,
