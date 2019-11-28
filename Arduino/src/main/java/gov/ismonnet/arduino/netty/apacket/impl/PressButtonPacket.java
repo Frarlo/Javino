@@ -10,5 +10,10 @@ public class PressButtonPacket implements APacket {
 
     private PressButtonPacket() {}
 
+    @Override
+    public String toString() {
+        return "PressButtonPacket{}";
+    }
+
     public static final APacketParser PARSER = (CustomByteBuf buf) -> new PressButtonPacket();
 }

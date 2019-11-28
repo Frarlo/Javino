@@ -20,6 +20,13 @@ public class PrintPacket implements APacket {
         return toPrint;
     }
 
+    @Override
+    public String toString() {
+        return "PrintPacket{" +
+                "toPrint='" + toPrint + '\'' +
+                '}';
+    }
+
     public static final APacketParser PARSER = (CustomByteBuf buf) -> {
         final String msg = buf.toString(StandardCharsets.UTF_8);
         return new PrintPacket(msg);

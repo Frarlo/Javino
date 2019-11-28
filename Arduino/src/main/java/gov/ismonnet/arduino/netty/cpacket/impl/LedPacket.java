@@ -26,4 +26,11 @@ public class LedPacket implements CPacket {
     public void writePacket(CustomByteBuf buf) {
         buf.writeBoolean(state);
     }
+
+    @Override
+    public String toString() {
+        return "LedPacket{" +
+                "state=" + state +
+                '}';
+    }
 }

@@ -151,5 +151,13 @@ public class ServerManager {
         public int hashCode() {
             return Objects.hash(clientIp, clientPort);
         }
+
+        @Override
+        public String toString() {
+            return "ClientInformation{" +
+                    "clientIp=" + clientIp +
+                    ", clientPort=" + clientPort +
+                    '}';
+        }
     }
 }

@@ -1,7 +1,7 @@
 package gov.ismonnet.arduino.netty.cpacket.impl;
 
-import gov.ismonnet.shared.netty.CustomByteBuf;
 import gov.ismonnet.arduino.netty.cpacket.CPacket;
+import gov.ismonnet.shared.netty.CustomByteBuf;
 
 public class StopReadingPacket implements CPacket {
 
@@ -14,5 +14,10 @@ public class StopReadingPacket implements CPacket {
 
     @Override
     public void writePacket(CustomByteBuf buf) {
+    }
+
+    @Override
+    public String toString() {
+        return "StopReadingPacket{}";
     }
 }

@@ -39,6 +39,8 @@ public class ClientManager {
     public void connect() throws SocketException {
         LOGGER.trace("Binding socket on port {}...", receivePort);
         socket = new DatagramSocket();
+        LOGGER.trace("Sending connect command...");
+        send(Commands.CONNECT);
 
         receiveThread = new Thread(() -> {
             try {

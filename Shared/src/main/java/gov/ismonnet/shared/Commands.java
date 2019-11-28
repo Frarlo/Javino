@@ -1,10 +1,11 @@
 package gov.ismonnet.shared;
 
 public enum Commands {
+    CONNECT("YO_BRO"),
+    DISCONNECT("SONO_MORTO"),
     PRESS_BUTTON("B_PRESS"),
     TURN_ON_LED("LED_ON"),
-    TURN_OFF_LED("LED_OFF"),
-    DISCONNECT("SONO_MORTO");
+    TURN_OFF_LED("LED_OFF");
 
     private final String toSend;
 

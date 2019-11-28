@@ -115,6 +115,7 @@ public final class ArduinoSerialManager {
             }
         }
 
+        storedPackets.clear();
         future.channel()
                 .writeAndFlush(new StopReadingPacket())
                 .awaitUninterruptibly();
