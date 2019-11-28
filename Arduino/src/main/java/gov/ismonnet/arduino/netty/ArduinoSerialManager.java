@@ -29,7 +29,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class ArduinoSerialManager {
 
+    // Constants
+
     private static final Logger LOGGER = LogManager.getLogger(ArduinoSerialManager.class);
+
+    private static final int SHUTDOWN_TIMEOUT = 5000;
     private static final Map<Byte, APacketParser> PACKET_PARSERS;
 
     static {
@@ -39,6 +43,8 @@ public final class ArduinoSerialManager {
         temp.put(PressButtonPacket.ID, PressButtonPacket.PARSER);
         PACKET_PARSERS = Collections.unmodifiableMap(temp);
     }
+
+    // Attributes
 
     private final String port;
     private final Bootstrap bootstrap;
@@ -62,19 +68,26 @@ public final class ArduinoSerialManager {
     }
 
     public void start() {
+        LOGGER.trace("Binding on serial port {}...", port);
         group = new OioEventLoopGroup();
         future = bootstrap
                 .group(group)
                 .connect(new PureJavaCommDeviceAddress(port))
                 .syncUninterruptibly();
 
+        LOGGER.trace("Sending StartComm packet...");
         sendPacketDirect(new StartCommPacket()).syncUninterruptibly();
+        LOGGER.trace("Sending StopReading packet...");
         sendPacketDirect(new StopReadingPacket()).syncUninterruptibly();
+
+        LOGGER.trace("Started Arduino Serial");
     }
 
     public void stop() {
         sendPacket(new EndCommPacket()).syncUninterruptibly();
-        future.channel().close().syncUninterruptibly();
+
+        LOGGER.trace("Shutting down arduino serial");
+        future.channel().close().awaitUninterruptibly(SHUTDOWN_TIMEOUT);
         group.shutdownGracefully();
     }
 

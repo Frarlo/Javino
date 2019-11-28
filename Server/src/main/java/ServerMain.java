@@ -7,5 +7,7 @@ public class ServerMain {
     public static void main(String[] args) throws SocketException {
         ServerManager server = new ServerManager(Constants.SEVER_PORT);
         server.bind();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
     }
 }

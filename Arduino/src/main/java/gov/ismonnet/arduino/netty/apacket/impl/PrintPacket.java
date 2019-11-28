@@ -1,8 +1,8 @@
 package gov.ismonnet.arduino.netty.apacket.impl;
 
-import gov.ismonnet.shared.netty.CustomByteBuf;
 import gov.ismonnet.arduino.netty.apacket.APacket;
 import gov.ismonnet.arduino.netty.apacket.APacketParser;
+import gov.ismonnet.shared.netty.CustomByteBuf;
 
 import java.nio.charset.StandardCharsets;
 
@@ -14,8 +14,6 @@ public class PrintPacket implements APacket {
 
     private PrintPacket(String toPrint) {
         this.toPrint = toPrint;
-        //TODO: remove debug statement
-        System.out.println("[Arduino] " + toPrint);
     }
 
     public String getToPrint() {

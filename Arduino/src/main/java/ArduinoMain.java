@@ -2,6 +2,7 @@ import gov.ismonnet.arduino.ArduinoClient;
 import gov.ismonnet.arduino.ReceiveThread;
 import gov.ismonnet.arduino.netty.ArduinoSerialManager;
 import gov.ismonnet.arduino.netty.apacket.APacket;
+import gov.ismonnet.arduino.netty.apacket.impl.PrintPacket;
 import gov.ismonnet.arduino.serial.CliSerialPortSelector;
 import gov.ismonnet.arduino.serial.PacketsToCommandsConverter;
 import gov.ismonnet.arduino.serial.PacketsToCommandsConverterImpl;
@@ -18,6 +19,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class ArduinoMain {
 
     private static final Logger LOGGER = LogManager.getLogger(ArduinoMain.class);
+    private static final int SHUTDOWN_TIMEOUT = 5000;
 
     public static void main(String[] args) throws SocketException {
 
@@ -46,6 +48,11 @@ public class ArduinoMain {
                 },
                 client::send);
         serial.register(received::push);
+        serial.register(packet -> {
+            if(!(packet instanceof PrintPacket))
+                return;
+            System.out.println("[Arduino] " + ((PrintPacket) packet).getToPrint());
+        });
 
         clientToSerial.start();
         serialToClient.start();
@@ -56,10 +63,15 @@ public class ArduinoMain {
         }));
 
         try {
-            clientToSerial.join();
-            serialToClient.join();
+            clientToSerial.join(SHUTDOWN_TIMEOUT);
         } catch (InterruptedException e) {
-            LOGGER.fatal("Exception while waiting for shutdown", e);
+            LOGGER.fatal("Exception while waiting for socket shutdown", e);
+        }
+
+        try {
+            serialToClient.join(SHUTDOWN_TIMEOUT);
+        } catch (InterruptedException e) {
+            LOGGER.fatal("Exception while waiting for serial shutdown", e);
         }
     }
 }

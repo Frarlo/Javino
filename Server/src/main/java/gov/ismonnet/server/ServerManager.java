@@ -14,16 +14,23 @@ import java.net.SocketException;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerManager {
+
+    // Constants
 
     private static final Logger LOGGER = LogManager.getLogger(ServerManager.class);
     private static final int SHUTDOWN_TIMEOUT = 5000;
 
-    private final Set<ClientInformation> clients = new HashSet<>();
-    private final int receivePort;
+    // Attributes
 
-    private DatagramSocket receiveSocket;
+    private final int receivePort;
+    private final Set<ClientInformation> clients = new HashSet<>();
+
+    private final AtomicInteger ledState = new AtomicInteger(0);
+
+    private DatagramSocket socket;
     private Thread receiveThread;
 
     private DatagramPacket packet;
@@ -34,41 +41,55 @@ public class ServerManager {
     }
 
     public void bind() throws SocketException {
-        receiveSocket = new DatagramSocket(receivePort);
+        LOGGER.trace("Binding socket on port {}...", receivePort);
+        socket = new DatagramSocket(receivePort);
         packet = new DatagramPacket(bufferIn, bufferIn.length);
 
         receiveThread = new Thread(() -> {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     bufferIn = new byte[256];
-                    receiveSocket.receive(packet);
+                    socket.receive(packet);
 
                     connectClient(packet.getAddress(), packet.getPort());
 
                     final String msg = UdpUtils.getInfoReceivedPacket(packet);
                     final Commands cmd = Commands.fromString(msg);
-                    if(cmd == null) {
-                        LOGGER.warn("Invalid command received {}", msg);
+                    if (cmd == null) {
+                        LOGGER.error("Invalid command received {}", msg);
                         continue;
                     }
 
                     // TODO: handle diff packets
+                    LOGGER.trace("Received command {}", packet);
                     sendToAll(cmd);
                 }
             } catch (Exception e) {
-                LOGGER.fatal("Unhandled exception when receiving packets", e);
+                LOGGER.fatal("Unhandled exception when receiving commands", e);
             }
         });
 
+        LOGGER.trace("Starting receive thread...");
         receiveThread.start();
+
+        LOGGER.trace("Server started.");
     }
 
-    public void stop() throws Exception {
+    public void stop() {
+        LOGGER.trace("Interrupting thread...");
         receiveThread.interrupt();
-        receiveThread.join(SHUTDOWN_TIMEOUT);
+        try {
+            receiveThread.join(SHUTDOWN_TIMEOUT);
+        } catch (InterruptedException ex) {
+            LOGGER.fatal("Couldn't interrupt receive thread");
+        }
 
+        LOGGER.trace("Sending disconnect command...");
         sendToAll(Commands.DISCONNECT);
-        receiveSocket.close();
+        LOGGER.trace("Closing socket...");
+        socket.close();
+
+        LOGGER.trace("Server stopped.");
     }
 
     private void sendToAll(Commands cmd) {
@@ -76,16 +97,26 @@ public class ServerManager {
     }
 
     private void send(Commands cmd, ClientInformation client) throws UncheckedIOException {
+        LOGGER.trace("Sending command {} to {}", cmd, client);
+
         try {
             final String msg = cmd.getToSend();
-            receiveSocket.send(UdpUtils.getPacketToSend(msg, client.getClientIp(), client.getClientPort()));
+            socket.send(UdpUtils.getPacketToSend(msg, client.getClientIp(), client.getClientPort()));
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
     }
 
     private void connectClient(InetAddress newClientIp, int newClientPort) {
-        clients.add(new ClientInformation(newClientIp, newClientPort));
+        final ClientInformation client = new ClientInformation(newClientIp, newClientPort);
+        clients.add(client);
+
+        LOGGER.trace("New connection {}", client);
+    }
+
+    private void disconnectClient(ClientInformation info) {
+        clients.remove(info);
+        LOGGER.trace("Closed connection {}", info);
     }
 
     static class ClientInformation {

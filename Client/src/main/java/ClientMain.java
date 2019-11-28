@@ -15,13 +15,7 @@ public class ClientMain  {
         cm.add(gui);
 
         //Serve per stoppare tutto <3
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                cm.stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }));
+        Runtime.getRuntime().addShutdownHook(new Thread(cm::stop));
     }
 
 }
