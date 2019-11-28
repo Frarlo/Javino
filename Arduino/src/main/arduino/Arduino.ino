@@ -15,10 +15,35 @@ byte frame[10];
 bool isOpen = false;
 bool isReading = true;
 
+// Arduino Packets IDs
+
+#define READY_TO_READ_APACKET ((byte) 0)
+#define PRINT_APACKET ((byte) 1)
+#define PRESS_BUTTON_APACKET ((byte) 2)
+
+// Computer Packets IDs
+
+#define START_COMM_CPACKET ((byte) 0)
+#define END_COMM_CPACKET ((byte) 1)
+#define STOP_READING_CPACKET ((byte) 3)
+#define LED_CPACKET ((byte) 4)
+
+// Pins
+
+#define LED_PIN 8
+#define BUTTON_PIN 2
+
+bool pressed;
+
 // Methods
 
 void setup() {
   Serial.begin(115200);
+  
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(BUTTON_PIN, INPUT);
+  
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), onButtonPress, RISING);
 }
 
 void sendPrintPacket(const String& s) {
@@ -26,7 +51,7 @@ void sendPrintPacket(const String& s) {
   
   Serial.write(DLE);
   Serial.write(STX);
-  Serial.write(1); // Packet id
+  Serial.write(PRINT_APACKET);
   
   for(int i = 0; s0[i] != '\0'; i++) {
     char c = *(s0 + i);
@@ -39,10 +64,18 @@ void sendPrintPacket(const String& s) {
   Serial.write(ETX);
 }
 
+void sendPressButtonPacket() {
+  Serial.write(DLE);
+  Serial.write(STX);
+  Serial.write(PRESS_BUTTON_APACKET);
+  Serial.write(DLE);
+  Serial.write(ETX);
+}
+
 void sendReadyToRead() {
   Serial.write(DLE);
   Serial.write(STX);
-  Serial.write(0);
+  Serial.write(READY_TO_READ_APACKET);
   Serial.write(DLE);
   Serial.write(ETX);
 }
@@ -53,13 +86,21 @@ void handlePacket(const byte* frame, int size) {
     
   byte packetId = frame[0];
 
-  if(packetId == 0) {
+  if(packetId == START_COMM_CPACKET) {
     isOpen = true;
   } else if(isOpen) {
-    if(packetId == 1) {
+    if(packetId == END_COMM_CPACKET) {
       isOpen = false;
-    } else if(packetId == 3) {
+    } else if(packetId == STOP_READING_CPACKET) {
       isReading = false;
+    } else if(packetId == LED_CPACKET) {
+      if(size < 2) {
+        sendPrintPacket("Invalid packet: LED_CPACKET missing state");
+        return;
+      }
+      
+      boolean state = frame[1];
+      digitalWrite(LED_PIN, state ? HIGH : LOW);
     }
   }
 }
@@ -89,7 +130,7 @@ void handleInput() {
         isReadingFrame = false;
         frameLength = 0;
       } else {
-        // TODO: Either raise an exception or log the error?
+        sendPrintPacket("Framing exception, discarding packet");
         isReadingFrame = false;
         frameLength = 0;
       }
@@ -97,11 +138,17 @@ void handleInput() {
  }
 }
 
+void onButtonPress() {
+  pressed = true;
+}
+
 void loop() {
   if(isReading)
     handleInput();
   else if(isOpen) {
-    sendPrintPacket("Hello World!");
+    if(pressed)
+      sendPressButtonPacket();
+    pressed = false;
 
     isReading = true;
     sendReadyToRead();
