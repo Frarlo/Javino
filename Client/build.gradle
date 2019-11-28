@@ -15,7 +15,7 @@ dependencies {
 
     // Swing
 
-    compile 'org.swinglabs.swingx:swingx-core:1.6.5-1'
+    compile 'com.miglayout:miglayout-swing:5.2'
 }
 
 jar {
