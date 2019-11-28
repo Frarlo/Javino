@@ -3,6 +3,7 @@ package gov.ismonnet.arduino;
 import gov.ismonnet.shared.UdpUtils;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.*;
 
 public class ArduinoClient {
@@ -19,19 +20,25 @@ public class ArduinoClient {
         this.receivePort = receivePort;
     }
 
-    public void send(String msg) throws IOException {
-
-        sendSocket.send(UdpUtils.getPacketToSend(msg, ip, receivePort));
+    public void send(String msg) throws UncheckedIOException {
+        try {
+            sendSocket.send(UdpUtils.getPacketToSend(msg, ip, receivePort));
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
-    public String read() throws IOException {
+    public String read() throws UncheckedIOException {
+        try {
+            byte[] buffer = new byte[256];
 
-        byte[] buffer = new byte[256];
+            DatagramPacket pkt = new DatagramPacket(buffer, buffer.length);
+            receiveSocket.receive(pkt);
 
-        DatagramPacket pkt = new DatagramPacket(buffer, buffer.length);
-        receiveSocket.receive(pkt);
-
-        return UdpUtils.getInfoReceivedPacket(pkt);
+            return UdpUtils.getInfoReceivedPacket(pkt);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
     }
 
 }

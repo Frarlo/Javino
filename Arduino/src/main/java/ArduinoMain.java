@@ -2,7 +2,6 @@ import gov.ismonnet.arduino.ArduinoClient;
 import gov.ismonnet.arduino.ReceiveThread;
 import gov.ismonnet.shared.Constants;
 
-import java.io.IOException;
 import java.net.SocketException;
 
 public class ArduinoMain {
@@ -11,23 +10,9 @@ public class ArduinoMain {
         ArduinoClient client = new ArduinoClient(Constants.IP_ADDRESS, Constants.ARDUINO_MAIN_RECEIVE_PORT);
 
 
-        Thread th = new ReceiveThread(
-                () -> {
-                    try {
-                        return client.read();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                },
-                toSend -> {
-                    try {
-                        client.send(toSend);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                });
-
+        final Thread th = new ReceiveThread(
+                client::read,
+                client::send);
         th.start();
 
         try {
@@ -35,6 +20,5 @@ public class ArduinoMain {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 }
