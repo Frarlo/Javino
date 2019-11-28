@@ -59,9 +59,18 @@ public class ServerManager {
                         continue;
                     }
 
-                    // TODO: handle diff packets
-                    LOGGER.trace("Received command {}", packet);
-                    sendToAll(cmd);
+                    LOGGER.trace("Received command {}", cmd);
+                    
+                    if(cmd == Commands.CONNECT) {
+                        connectClient(packet.getAddress(), packet.getPort());
+                    } else if (cmd == Commands.DISCONNECT) {
+                        disconnectClient(new ClientInformation(packet.getAddress(), packet.getPort()));
+                    } else if (cmd == Commands.PRESS_BUTTON) {
+                        final boolean state = ledState.getAndIncrement() % 2 == 0;
+                        sendToAll(state ? Commands.TURN_ON_LED : Commands.TURN_OFF_LED);
+                    } else {
+                        throw new AssertionError("Command not implemented " + cmd);
+                    }
                 }
             } catch (Exception e) {
                 LOGGER.fatal("Unhandled exception when receiving commands", e);
