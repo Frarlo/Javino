@@ -10,6 +10,7 @@ import java.util.List;
 class ClientInformation{
     private final InetAddress ClientIp;
     private final int ClientPort;
+    //TODO: How should I set ClientName? Maybe we don't need ClientName
     private String ClientName;
 
     public ClientInformation(){
@@ -18,30 +19,24 @@ class ClientInformation{
         this.ClientName = "";
     }
 
-    public ClientInformation(final InetAddress ip, final int port){
+    ClientInformation(final InetAddress ip, final int port){
         this.ClientPort = port;
         this.ClientIp = ip;
         this.ClientName = "";
     }
 
-    public final InetAddress getClientIp() {
+    InetAddress getClientIp() {
         return ClientIp;
     }
 
-    public final int getClientPort() {
+    int getClientPort() {
         return ClientPort;
     }
 
-    public final String getClientName() {
-        return ClientName;
-    }
-    //TODO: How should I set ClientName? Maybe we don't need ClientName
-    public void setClientName(String ClientName) { this.ClientName = ClientName; }
-
-    public boolean equals(ClientInformation temp){
-        if(this.ClientIp.equals(temp.ClientIp) && this.ClientPort == temp.ClientPort)
-            return true;
-        else
+    boolean equals(ClientInformation temp){
+        if (this.ClientIp != null) {
+            return this.ClientIp.equals(temp.ClientIp) && this.ClientPort == temp.ClientPort;
+        } else
             return false;
     }
 }
@@ -88,26 +83,17 @@ public class ServerManager {
         receiveThread.start();
     }
 
-    private final void send(String msg, ClientInformation client) throws IOException {
+    private void send(String msg, ClientInformation client) throws IOException {
         receiveSocket.send(UdpUtils.getPacketToSend(msg, client.getClientIp(), client.getClientPort()));
     }
 
-    private final String read() throws IOException {
-        byte[] buffer = new byte[256];
-
-        DatagramPacket pkt = new DatagramPacket(buffer, buffer.length);
-        receiveSocket.receive(pkt);
-
-        return UdpUtils.getInfoReceivedPacket(pkt);
-    }
-
-    private final void connectClient(InetAddress newClientIp,int newClientPort){
+    private void connectClient(InetAddress newClientIp,int newClientPort){
         ClientInformation temp = new ClientInformation(newClientIp, newClientPort);
         boolean exist = false;
 
-        for(int ini = 0; ini < clients.size(); ini++){
-            if(clients.get(ini).equals(temp)){
-                exist =  true;
+        for (ClientInformation client : clients) {
+            if (client.equals(temp)) {
+                exist = true;
                 break;
             }
         }
