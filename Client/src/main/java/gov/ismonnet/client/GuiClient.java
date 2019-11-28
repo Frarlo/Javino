@@ -11,19 +11,11 @@ public class GuiClient implements Listener {
     private JPanel panel1;
     private ClientManager cm;
 
-
     public GuiClient(ClientManager cm) {
-        this.cm = cm ;
+        this.cm = cm;
 
-        cliccaQuaCheSiButton.addActionListener(new ActionListener() {
-            @Override
-
-
-            public void actionPerformed(ActionEvent actionEvent) {
-                //Invia messaggio
-                cm.send(Commands.PRESS_BUTTON);
-
-            }
+        cliccaQuaCheSiButton.addActionListener(actionEvent -> {
+            cm.send(Commands.PRESS_BUTTON);
         });
     }
 
@@ -31,19 +23,13 @@ public class GuiClient implements Listener {
     public void receive(Commands msg) {
         //Accende o spegne la lampèadina
 
-        if(Commands.TURN_ON_LED == msg)
-        {
+        if (Commands.TURN_ON_LED == msg) {
             //accendo la lampada
-        }
-        else if(Commands.TURN_OFF_LED == msg)
-        {
+        } else if (Commands.TURN_OFF_LED == msg) {
 
-        }
-        else if(Commands.DISCONNECT == msg)
-        {
+        } else if (Commands.DISCONNECT == msg) {
             System.exit(0);
         }
-
 
     }
 }

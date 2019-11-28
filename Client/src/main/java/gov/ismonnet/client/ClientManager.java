@@ -30,7 +30,7 @@ public class ClientManager {
     }
 
     public void connect() throws SocketException {
-        socket = new DatagramSocket(new InetSocketAddress(ip, receivePort));
+        socket = new DatagramSocket();
         receiveThread = new Thread(() -> {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
@@ -52,7 +52,7 @@ public class ClientManager {
         socket.close();
     }
 
-    public void send(Commands cmd) throws UncheckedIOException {
+    void send(Commands cmd) throws UncheckedIOException {
         String msg = cmd.getToSend();
         try {
             socket.send(UdpUtils.getPacketToSend(msg, ip, receivePort));
@@ -61,7 +61,7 @@ public class ClientManager {
         }
     }
 
-    public Commands read() throws UncheckedIOException {
+    private Commands read() throws UncheckedIOException {
         try {
             byte[] buffer = new byte[256];
 

@@ -9,22 +9,27 @@ import java.net.*;
 
 public class ArduinoClient {
 
-    private DatagramSocket receiveSocket;
-    private DatagramSocket sendSocket;
+    private DatagramSocket socket;
     private InetAddress ip;
     private int receivePort;
 
-    public ArduinoClient(InetAddress ip, int receivePort) throws SocketException {
-        this.receiveSocket = new DatagramSocket(receivePort);
-        this.sendSocket = new DatagramSocket();
+    public ArduinoClient(InetAddress ip, int receivePort) {
         this.ip = ip;
         this.receivePort = receivePort;
+    }
+
+    public void connect() throws SocketException {
+        socket = new DatagramSocket();
+    }
+
+    public void close(){
+        socket.close();
     }
 
     public void send(Commands cmd) throws UncheckedIOException {
         String msg = cmd.getToSend();
         try {
-            sendSocket.send(UdpUtils.getPacketToSend(msg, ip, receivePort));
+            socket.send(UdpUtils.getPacketToSend(msg, ip, receivePort));
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
@@ -35,7 +40,7 @@ public class ArduinoClient {
             byte[] buffer = new byte[256];
 
             DatagramPacket pkt = new DatagramPacket(buffer, buffer.length);
-            receiveSocket.receive(pkt);
+            socket.receive(pkt);
 
             return Commands.fromString(UdpUtils.getInfoReceivedPacket(pkt));
         } catch (IOException ex) {

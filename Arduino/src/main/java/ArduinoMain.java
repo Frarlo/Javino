@@ -29,6 +29,7 @@ public class ArduinoMain {
         serial.start();
 
         final ArduinoClient client = new ArduinoClient(Constants.SERVER_IP_ADDRESS, Constants.SEVER_PORT);
+        client.connect();
 
         final Thread clientToSerial = new ReceiveThread(
                 client::read,
@@ -51,7 +52,7 @@ public class ArduinoMain {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             serial.stop();
-            // TODO: uccidere il client
+            client.close();
         }));
 
         try {
