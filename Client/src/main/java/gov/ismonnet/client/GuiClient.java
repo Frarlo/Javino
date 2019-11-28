@@ -13,7 +13,7 @@ public class GuiClient implements Listener {
 
 
     public GuiClient(ClientManager cm) {
-            this.cm = cm ;
+        this.cm = cm ;
 
         cliccaQuaCheSiButton.addActionListener(new ActionListener() {
             @Override
@@ -21,7 +21,7 @@ public class GuiClient implements Listener {
 
             public void actionPerformed(ActionEvent actionEvent) {
                 //Invia messaggio
-                    cm.send(Commands.PRESS_BUTTON);
+                cm.send(Commands.PRESS_BUTTON);
 
             }
         });
