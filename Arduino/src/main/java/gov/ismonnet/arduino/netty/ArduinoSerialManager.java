@@ -114,7 +114,10 @@ public final class ArduinoSerialManager {
                 promise.tryFailure(e);
             }
         }
-        sendPacketDirect(new StopReadingPacket()).awaitUninterruptibly();
+
+        future.channel()
+                .writeAndFlush(new StopReadingPacket())
+                .awaitUninterruptibly();
     }
 
     private class ArduinoChannelHandler extends ChannelInitializer<PureJavaCommChannel> {
@@ -136,12 +139,14 @@ public final class ArduinoSerialManager {
                                 if(packetParser == null)
                                     throw new RuntimeException("There is no parser for the given ID (" + packetId+ ')');
                                 final APacket packet = packetParser.parse(msg0);
-                                LOGGER.trace("Received packet {}", packet);
 
                                 if(packet instanceof ReadyToReadPacket)
                                     sendStoredPackets();
-                                 else
-                                     fire(packet);
+                                 else {
+                                    LOGGER.trace("Received packet {}", packet);
+                                    fire(packet);
+                                }
+
                             } catch(Exception e) {
                                 LOGGER.error("Couldn't decode packet with ID {}", packetId, e);
                             }

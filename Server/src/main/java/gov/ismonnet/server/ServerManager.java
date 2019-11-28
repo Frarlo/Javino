@@ -43,12 +43,13 @@ public class ServerManager {
     public void bind() throws SocketException {
         LOGGER.trace("Binding socket on port {}...", receivePort);
         socket = new DatagramSocket(receivePort);
+
+        bufferIn = new byte[256];
         packet = new DatagramPacket(bufferIn, bufferIn.length);
 
         receiveThread = new Thread(() -> {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
-                    bufferIn = new byte[256];
                     socket.receive(packet);
 
                     connectClient(packet.getAddress(), packet.getPort());

@@ -12,6 +12,10 @@ dependencies {
 
     compile 'org.apache.logging.log4j:log4j-api:2.11.1'
     compile 'org.apache.logging.log4j:log4j-core:2.11.1'
+
+    // Swing
+
+    compile 'org.swinglabs.swingx:swingx-core:1.6.5-1'
 }
 
 jar {

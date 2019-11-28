@@ -23,7 +23,7 @@ public class CliSerialPortSelector implements SerialPortSelector {
                 .toArray(String[]::new);
 
         out.println("Ports: " + String.join(", ", ports));
-        out.print("Choose a valid port to use: ");
+        out.println("Choose a valid port to use: ");
 
         final String portIn = scanner.next();
         out.println("Selected: " + portIn);
