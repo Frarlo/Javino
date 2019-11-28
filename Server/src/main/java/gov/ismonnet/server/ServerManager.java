@@ -52,8 +52,6 @@ public class ServerManager {
                 while (!Thread.currentThread().isInterrupted()) {
                     socket.receive(packet);
 
-                    connectClient(packet.getAddress(), packet.getPort());
-
                     final String msg = UdpUtils.getInfoReceivedPacket(packet);
                     final Commands cmd = Commands.fromString(msg);
                     if (cmd == null) {
@@ -113,7 +111,7 @@ public class ServerManager {
         clients.add(client);
         LOGGER.trace("New connection {}", client);
 
-        final boolean state = ledState.getAndIncrement() % 2 == 0;
+        final boolean state = ledState.get() % 2 != 0;
         send(state ? Commands.TURN_ON_LED : Commands.TURN_OFF_LED, client);
     }
 
