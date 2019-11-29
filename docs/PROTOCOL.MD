@@ -1,6 +1,7 @@
 # Documento di specifica protocollo
 
 Il funzionamento generale del protocollo utilizzato è descritto nel seguente diagramma di sequenza:
+
 ![Diagramma di sequenza del protocollo](Protocol.svg)
 
 Si può notare come sia diviso in due parti distinte: 
@@ -67,4 +68,5 @@ Questo significa che il client connesso ad Arduino dovrà preoccuparsi di salvar
 fino a quando Arduino sarà pronto a leggere.
 
 La comunicazione avverrà quindi nel seguente modo:
+
 ![Diagramma di sequenza del protocollo seriale](SerialProtocol.svg)
