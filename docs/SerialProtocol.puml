@@ -1,0 +1,24 @@
+@startuml
+
+participant Arduino
+participant "Client Arduino" as AClient
+
+AClient -> Arduino: StartComm
+activate Arduino
+activate AClient
+AClient -> Arduino: StopReading
+|||
+Arduino -> AClient: Pacchetti vari
+Arduino -> AClient: ReadyToRead
+|||
+AClient -> Arduino: Pacchetti vari
+AClient -> Arduino: StopReading
+|||
+Arduino -> AClient: Pacchetti vari
+Arduino -> AClient: ReadyToRead
+|||
+AClient -> Arduino: EndComm
+destroy Arduino
+destroy AClient
+
+@enduml

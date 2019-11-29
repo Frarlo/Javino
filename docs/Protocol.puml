@@ -1,0 +1,45 @@
+@startuml
+
+participant Arduino
+participant "Client Arduino" as AClient
+participant Server
+participant Client
+
+activate Server
+activate Arduino
+...
+AClient -> Arduino: StartCommPacket
+activate AClient
+...
+AClient -> Server: CONNECT
+Server -> AClient: TURN_OFF_LED
+AClient -> Arduino: LedPacket{state: false}
+...
+Arduino -> AClient: PressButtonPacket
+AClient -> Server: PRESS_BUTTON
+Server -> AClient: TURN_ON_LED
+AClient -> Arduino: LedPacket{state: true}
+...
+Client -> Server: CONNECT
+activate Client
+Server -> Client: TURN_ON_LED
+...
+Arduino -> AClient: PressButtonPacket
+AClient -> Server: PRESS_BUTTON
+Server -> Client: TURN_OFF_LED
+Server -> AClient: TURN_OFF_LED
+AClient -> Arduino: LedPacket{state: false}
+...
+AClient -> Arduino: EndCommPacket
+destroy Arduino
+AClient -> Server: DISCONNECT
+destroy AClient
+...
+Client -> Server: PRESS_BUTTON
+Server -> Client: TURN_ON_LED
+...
+Server -> Client : DISCONNECT
+destroy Server
+destroy Client
+
+@enduml
